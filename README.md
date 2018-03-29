@@ -1,2 +1,2 @@
 # Project
-Random project and code
+This repository will contains a collection of small project or code snippet
