@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_profile"
+        android:enabled="true"
+        android:title="profile"
+        app:showAsAction="always|withText"
+        />
+    <item
+        android:id="@+id/action_stats"
+        android:enabled="true"
+        android:title="stats"
+        app:showAsAction="always|withText"
+        />
+    <item
+        android:id="@+id/action_exercise"
+        android:enabled="true"
+        android:title="exercise"
+        app:showAsAction="always|withText"
+        />
+    <item
+        android:id="@+id/action_workout"
+        android:enabled="true"
+        android:title="workout"
+        app:showAsAction="always|withText"
+        />
+</menu>
