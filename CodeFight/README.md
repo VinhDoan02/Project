@@ -9,7 +9,7 @@ from CodeFight that i found interesting or challenging.
 I will try to talk about my though process on this README as well as providing a solution in JAVA.
 Some comment can also be found in the code.
 
-## LexSwapOrder
+### LexSwapOrder
 My Original method was a brute force method. I first tried by using a wrapper class with a recursive method.
 The idea was to generate all possible swapping solution from the indices and add them to a HashSet the recursion would stop when it found a previously found String.
 However, that would prove to not work quite well for a larger data set which would cause a StackOverflow error due to all the recursion accessing the same HashSet. 
