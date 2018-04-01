@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import dagger.android.AndroidInjection;
 import doan.vinh.workit.R;
@@ -69,11 +70,21 @@ public class ExerciseActivity extends AppCompatActivity {
     }
 
     @BindView(R.id.btn_trigger_timer) Button btn_trigger_timer;
-    @OnClick(R.id.btn_trigger_timer)
-    void onClick()
+    //@OnClick(R.id.btn_trigger_timer)
+    @OnCheckedChanged(R.id.btn_trigger_timer)
+    void onButtonStarted(boolean started)
     {
-        mExerciseViewModel.triggerTimer();
+        mExerciseViewModel.triggerTimer(started);
     }
+
+    @BindView(R.id.btn_cancel) Button btn_cancel;
+    @OnClick(R.id.btn_cancel)
+    void onCancelExercise()
+    {
+        Intent intent = new Intent(ExerciseActivity.this, MainActivity.class);
+        startActivity(intent);
+    }
+
 
     public void updateTimer(String timer)
     {

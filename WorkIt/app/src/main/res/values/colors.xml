@@ -5,7 +5,8 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="colorBackground">#10b793</color>
-    <color name = "colorButton">#89cfed</color>>
-    <color name = "whiteText">#ffffff</color>>
-    <color name = "grey">#E3E3E3</color>>
+    <color name = "colorButton">#89cfed</color>
+    <color name = "whiteText">#ffffff</color>
+    <color name = "grey">#E3E3E3</color>
+    <color name="colorButtonExercise">#11dc73</color>
 </resources>

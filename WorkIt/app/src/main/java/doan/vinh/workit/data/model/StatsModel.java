@@ -204,13 +204,15 @@ public class StatsModel {
 
     public void setlastRepetition(RealmRepetition repetition)
     {
+        lastRepetitionDuration = repetition.getDuration();
+
         if(isCountable)
         {
             lastRepetitionCount = repetition.getQte();
+            lastRepetition = "Last rep duration: " + AppUtils.convertTimeToStringFormat(lastRepetitionDuration) + " qte: "+lastRepetitionCount;
+        }else
+        {
+            lastRepetition = "Last rep duration: " + AppUtils.convertTimeToStringFormat(lastRepetitionDuration);
         }
-
-        lastRepetitionDuration = repetition.getDuration();
-
-        lastRepetition = "Last rep duration: " + AppUtils.convertTimeToStringFormat(lastRepetitionDuration) + " qte: "+lastRepetitionCount ;
     }
 }

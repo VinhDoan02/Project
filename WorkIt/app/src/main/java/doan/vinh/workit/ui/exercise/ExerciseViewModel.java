@@ -26,7 +26,7 @@ public class ExerciseViewModel extends BaseViewModel {
     MutableLiveData<Boolean> uploadComplete = new MutableLiveData<>();
     MutableLiveData<Boolean> timerCompleted = new MutableLiveData<>();
 
-    Boolean timerStarted = false;
+    Boolean timerStarting = false;
     String TAG = "EviewModel";
 
     Exercise exercise;
@@ -60,7 +60,7 @@ public class ExerciseViewModel extends BaseViewModel {
                 String time = String.format("%02d:%02d:%02d", minutes, seconds,hundreds);
                 timerData.setValue(time);
                 timerData.setValue(time);
-                if(timerStarted)
+                if(timerStarting)
                 {
                     timerHandler.postDelayed(this, 50);
                 }
@@ -73,19 +73,18 @@ public class ExerciseViewModel extends BaseViewModel {
 
     }
 
-    public void triggerTimer()
+    public void triggerTimer(boolean isStarting)
     {
-        if(timerStarted)
+        timerStarting = isStarting;
+        if(timerStarting)
+        {
+
+            startTime = System.currentTimeMillis();
+            startTimer();
+        }else
         {
             Log.d(TAG,"Stop");
             stopTimer();
-            timerStarted = false;
-
-        }else
-        {
-            timerStarted = true;
-            startTime = System.currentTimeMillis();
-            startTimer();
         }
     }
 
