@@ -1,11 +1,9 @@
+
 /*
 *I included a bruteforce method at the end that actually would not work well with large dataset.
-*/ 
- 
- 
- String swapLexOrder(String str, int[][] pairs) {
+*/
 
-
+    String swapLexOrder(String str, int[][] pairs) {
 
         ArrayList<TreeSet<Integer>> joinPairList = joinPair(pairs);
 
@@ -16,18 +14,16 @@
         return result;
     }
 
-	/**
-	*This method would take the double array of indices and combine pairs to form a larger set when having overlapping indices.
-	*/
+    /**
+     *This method would take the double array of indices and combine pairs to form a larger set when having overlapping indices.
+     */
     public ArrayList<TreeSet<Integer>> joinPair(int[][] pairs)
     {
         ArrayList<TreeSet<Integer>> jointPairList = new ArrayList<TreeSet<Integer>>();
 
         int size = pairs.length;
-
         for(int i = 0 ; i < size ; i++)
         {
-
             int first = pairs[i][0];
             int second = pairs[i][1];
 
@@ -38,18 +34,13 @@
             {
                 TreeSet<Integer> tempSet = jointPairList.get(j);
 
-
                 if(tempSet.contains(first) || tempSet.contains(second))
                 {
-
                     findMatch = true;
                     matchingSet.add(j);
                     tempSet.add(first);
                     tempSet.add(second);
-
-
                 }
-
             }
 
             if(!findMatch)
@@ -60,13 +51,13 @@
                 jointPairList.add(tempSet);
             }else
             {
-				/* 
-				*this part will combine two larger sets together 
+				/*
+				*this part will combine two larger sets together
 				*in case that the current pair indices would overlap with both sets
-                *this can be at most two larger set that needs to be combine 
+                *this can be at most two larger set that needs to be combine
 				*because each original indices are a pairs.
 				*/
-				if(matchingSet.size() >1)
+                if(matchingSet.size() >1)
                 {
                     int indice1 = matchingSet.get(0);
                     int indice2 = matchingSet.get(1);
@@ -80,23 +71,20 @@
                     tempSet1.addAll(tempSet2);
                     jointPairList.add(tempSet1);
                 }
-
             }
-
         }
-
         return jointPairList;
     }
 
 
-	
-	/**
-	*This method would take the larger sets of indices and find the correspondinc character from the string and then sort them
-	*For example the following string abcdef with the following pairs of indices [1,2][2,3],[4,5]
-	*the two first indices would overlap giving [1,2,3],[4,5] only character on indice 1,2,3 could be swapped together
-	*and can be swapped with indice 4 or 5 for example. As such for each sets of indices
-	*we want to get the character corresponding to that sets then sort them
-	*/
+
+    /**
+     *This method would take the larger sets of indices and find the correspondinc character from the string and then sort them
+     *For example the following string abcdef with the following pairs of indices [1,2][2,3],[4,5]
+     *the two first indices would overlap giving [1,2,3],[4,5] only character on indice 1,2,3 could be swapped together
+     *and can be swapped with indice 4 or 5 for example. As such for each sets of indices
+     *we want to get the character corresponding to that sets then sort them
+     */
     public HashMap<TreeSet<Integer>,ArrayList<Character>> retrieveChar(String str,ArrayList<TreeSet<Integer>> jointpairList )
     {
         HashMap<TreeSet<Integer>,ArrayList<Character>> indiceCharMapping = new HashMap<>();
@@ -119,13 +107,12 @@
         return indiceCharMapping;
     }
 
-	/**
-	*This method is straightforward it just replace the character with the most optimum one obtain from the previous steps
-	*Then return the proper result.
-	*/
+    /**
+     *This method is straightforward it just replace the character with the most optimum one obtain from the previous steps
+     *Then return the proper result.
+     */
     public String swapStringOrder(String str,HashMap<TreeSet<Integer>,ArrayList<Character>> indiceCharMapping)
     {
-
         Iterator it = indiceCharMapping.entrySet().iterator();
         char[] swappedCharString = str.toCharArray();
         while(it.hasNext())
@@ -140,73 +127,60 @@
                 swappedCharString[value-1] = tempChar;
                 charCounter++;
             }
-
         }
-
         return new String(swappedCharString);
-
     }
-	
-	
-	
-	
-	
-	/**
-	*The following is the brute force method that would not work well with larger dataset.
-	*/
-	String swapLexOrder(String str, int[][] pairs) {
 
-    HashMap<String,Integer> lexOrder = new HashMap<String,Integer>();
-    ArrayDeque<String> tempQueue = new ArrayDeque();
-    
-    lexOrder.put(str,-1);
-    tempQueue.add(str);
-    
-    
-     int pairsize = pairs.length;  
-     String highest = str;
-     String tempSwap = tempQueue.poll(); 
-    
-    while(tempSwap != null)
-    {
-             
-      
-        
-        for(int i = 0 ; i < pairsize;i++)
+
+    /**
+     *The following is the brute force method that would not work well with larger dataset.
+     */
+    String swapLexOrder(String str, int[][] pairs) {
+
+        HashMap<String,Integer> lexOrder = new HashMap<String,Integer>();
+        ArrayDeque<String> tempQueue = new ArrayDeque();
+
+        lexOrder.put(str,-1);
+        tempQueue.add(str);
+
+        int pairsize = pairs.length;
+        String highest = str;
+        String tempSwap = tempQueue.poll();
+
+        while(tempSwap != null)
         {
-    
-        int[] pairIndices = pairs[i];
-        int first = pairIndices[0]-1;
-        int second = pairIndices[1]-1;
-        tempSwap = swapChar(tempSwap,first,second);     
-            if(!lexOrder.containsKey(tempSwap))
+            for(int i = 0 ; i < pairsize;i++)
             {
-                lexOrder.put(tempSwap,i);
-                tempQueue.add(tempSwap);
-              if(highest.compareTo(tempSwap) < 0)
-              {
-                  highest = tempSwap;
-              }
+
+                int[] pairIndices = pairs[i];
+                int first = pairIndices[0]-1;
+                int second = pairIndices[1]-1;
+                tempSwap = swapChar(tempSwap,first,second);
+                if(!lexOrder.containsKey(tempSwap))
+                {
+                    lexOrder.put(tempSwap,i);
+                    tempQueue.add(tempSwap);
+                    if(highest.compareTo(tempSwap) < 0)
+                    {
+                        highest = tempSwap;
+                    }
+                }
             }
+
+            tempSwap = tempQueue.poll();
         }
-        
-        tempSwap = tempQueue.poll(); 
+
+        return highest;
     }
-    
-    return highest;
-}
 
- public String swapChar(String string,int first,int second)
-{
-    char[] cString = string.toCharArray();
-    
-    char temp1 = cString[first];
-    cString[first] = cString[second];
-    cString[second] = temp1;
-     
-    return new String(cString);
-}
-    
-    
+    public String swapChar(String string,int first,int second)
+    {
+        char[] cString = string.toCharArray();
 
+        char temp1 = cString[first];
+        cString[first] = cString[second];
+        cString[second] = temp1;
+
+        return new String(cString);
+    }
 
