@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import javax.inject.Inject;
 
@@ -123,7 +124,7 @@ public class ExerciseActivity extends AppCompatActivity {
                    }
                }else
                {
-                   Log.d(TAG,"please input a number");
+                   Toast.makeText(ExerciseActivity.this, "please input a number", Toast.LENGTH_LONG).show();
                }
 
            }

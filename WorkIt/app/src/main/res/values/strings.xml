@@ -11,6 +11,10 @@
     <string name="txt_or">or</string>
     <string name="button_guest">Guest Login</string>
 
+
+    <string name ="dialog_text">How many repetition have you completed?</string>
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
