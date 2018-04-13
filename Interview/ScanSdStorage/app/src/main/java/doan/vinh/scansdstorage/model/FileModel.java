@@ -7,9 +7,9 @@ import android.support.annotation.NonNull;
  */
 
 public class FileModel implements Comparable<FileModel> {
-    String name;
-    String type;
-    double size;
+    private final String name;
+    private final String type;
+    private final double size;
 
 
     public FileModel(String name, String type, double size)

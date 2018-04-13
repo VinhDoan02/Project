@@ -8,8 +8,8 @@ import android.support.annotation.NonNull;
 
 public class OccurenceTypeModel implements Comparable<OccurenceTypeModel>{
 
-    int occurence = 0;
-    String type;
+  private int occurence = 0;
+  private final String type;
 
 
     public OccurenceTypeModel(String type) {

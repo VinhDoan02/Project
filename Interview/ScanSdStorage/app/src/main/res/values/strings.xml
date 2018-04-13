@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ScanSdStorage</string>
+    <string name="btn_share">Share</string>
+    <string name="toggle_on">Stop</string>
+    <string name= "toggle_off">Start</string>
+
 </resources>

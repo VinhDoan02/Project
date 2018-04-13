@@ -1,4 +1,4 @@
-package doan.vinh.scansdstorage;
+package doan.vinh.scansdstorage.ui;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import doan.vinh.scansdstorage.Utils.ScanUtils;
 import doan.vinh.scansdstorage.model.FileModel;
 import doan.vinh.scansdstorage.model.OccurenceTypeModel;
 
@@ -19,15 +20,19 @@ import doan.vinh.scansdstorage.model.OccurenceTypeModel;
 
 public class MainViewModel extends ViewModel {
 
-String TAG = "MainViewModel";
-Thread backgroundThread;
-ScanUtils scan;
-MutableLiveData<String> top_10 = new MutableLiveData<>();
-MutableLiveData<String> most_frequent_5 = new MutableLiveData<>();
-MutableLiveData<String> average_file_size = new MutableLiveData<>();
-MutableLiveData<Integer> scan_progress = new MutableLiveData<>();
-MutableLiveData<Boolean> onCompleted = new MutableLiveData<>();
+private final String TAG = "MainViewModel";
+private Thread backgroundThread;
+private ScanUtils scan;
+private MutableLiveData<String> top_10 = new MutableLiveData<>();
+private MutableLiveData<String> most_frequent_5 = new MutableLiveData<>();
+private MutableLiveData<String> average_file_size = new MutableLiveData<>();
+private MutableLiveData<Integer> scan_progress = new MutableLiveData<>();
+private MutableLiveData<Boolean> onCompleted = new MutableLiveData<>();
 
+public MainViewModel(ScanUtils scan)
+{
+    this.scan = scan;
+}
 
     public void startScan(final ContentResolver cr)
     {
@@ -35,30 +40,36 @@ MutableLiveData<Boolean> onCompleted = new MutableLiveData<>();
         backgroundThread = new Thread(new Runnable() {
             public void run() {
                 // a potentially  time consuming task
-
-                scan = new ScanUtils();
+                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
                 scan.setProgressListener(new ScanUtils.OnProgressListener() {
                     @Override
                     public void onProgress(int percentage) {
 
                         update(percentage);
+                      //  Log.d(TAG,"percentage " + percentage);
                     }
 
                     @Override
                     public void onCompleted(ArrayList<FileModel> fileModels, HashMap<String, OccurenceTypeModel> occurenceTypeModelMap) {
 
+                      //  Log.d(TAG,"on complete");
+                        if(fileModels.isEmpty() || fileModels == null)
+                        {
+                            top_10.setValue("No files on external Storage");
+                        }else
+                        {
+                            computeBiggestTen(fileModels);
+                            computeMostFrequent(occurenceTypeModelMap);
+                            computeAverage(fileModels);
+                        }
 
-                        computeBiggestTen(fileModels);
-                        computeMostFrequent(occurenceTypeModelMap);
-                        computeAverage(fileModels);
 
                         onCompleted.postValue(true);
                     }
 
 
-
-
                 });
+
                 scan.startScan(cr);
 
 
@@ -76,17 +87,19 @@ MutableLiveData<Boolean> onCompleted = new MutableLiveData<>();
     public void computeMostFrequent(HashMap<String, OccurenceTypeModel> occurenceTypeModelMap)
     {
         StringBuilder result = new StringBuilder("Top 5 most frequent file extensions\n");
+        result.append("    ------  \n");
         ArrayList<OccurenceTypeModel> testOccurence = new ArrayList<>(occurenceTypeModelMap.values());
         Collections.sort(testOccurence);
 
         int size = Math.min(5,testOccurence.size());
         for(int l = 0 ; l < size ; l++)
         {
-            result.append("ext : ");
+            result.append("Extensions : ");
             result.append(testOccurence.get(l).getType());
-            result.append(", count : ");
+            result.append("\nFrequencies : ");
             result.append(testOccurence.get(l).getOccurence());
             result.append("\n");
+            result.append("  ----  \n");
         }
 
         most_frequent_5.postValue(result.toString());
@@ -95,15 +108,18 @@ MutableLiveData<Boolean> onCompleted = new MutableLiveData<>();
     public void computeBiggestTen(ArrayList<FileModel> fileModels)
     {
         StringBuilder result = new StringBuilder("Top 10 biggest files \n");
+        result.append("    ------  \n");
         Collections.sort(fileModels);
         int size = Math.min(10,fileModels.size());
         for(int j = 0; j < size;j++)
         {
+            result.append("Filename : ");
             result.append(fileModels.get(j).getName());
-            result .append(" size :");
+            result .append("\nSize : ");
             result.append(new DecimalFormat("#.##").format(fileModels.get(j).getSize()));
-            result.append("Mb");
+            result.append("MB");
             result.append("\n");
+            result.append("  ----  \n");
         }
 
         top_10.postValue(result.toString());
@@ -116,37 +132,36 @@ MutableLiveData<Boolean> onCompleted = new MutableLiveData<>();
         for (int i =0 ; i < size ; i ++)
         {
             double tempAverage = fileModels.get(i).getSize();
-
+            Log.d(TAG,"size" + tempAverage);
             average = average + (tempAverage/size);
+
         }
         StringBuilder result = new StringBuilder();
         result.append("Average file size is : ");
         result.append(new DecimalFormat("#.##").format(average));
-        result.append("Mb");
+        result.append("MB");
         average_file_size.postValue(result.toString());
     }
 
 
     public void update(int percentage)
     {
-        Log.d(TAG,"percent " + percentage);
         scan_progress.postValue(percentage);
     }
 
     public void stopScan()
     {
-        Log.d(TAG,"stop");
-
-        if(backgroundThread != null)
-        {
-            Log.d(TAG,"tried to interupt");
-            backgroundThread.interrupt();
-        }
 
         if(scan != null)
         {
             scan.setKeepScanning(false);
         }
+
+        if(backgroundThread != null)
+        {
+            backgroundThread.interrupt();
+        }
+
 
     }
 
@@ -165,4 +180,12 @@ MutableLiveData<Boolean> onCompleted = new MutableLiveData<>();
     public MutableLiveData<Integer> getScan_progress() {
         return scan_progress;
     }
+
+    @Override
+    protected void onCleared() {
+
+        stopScan();
+        super.onCleared();
+    }
+
 }

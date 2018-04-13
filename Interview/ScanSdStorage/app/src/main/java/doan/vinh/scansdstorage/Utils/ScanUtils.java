@@ -1,12 +1,9 @@
-package doan.vinh.scansdstorage;
+package doan.vinh.scansdstorage.Utils;
 
 import android.content.ContentResolver;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
-import android.webkit.MimeTypeMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,15 +17,29 @@ import doan.vinh.scansdstorage.model.OccurenceTypeModel;
 
 public class ScanUtils {
    // Context context;
+  private HashMap<String,OccurenceTypeModel> occurenceTypeModelMap;
+  private boolean keepScanning = true;
+  private final double megaBytesSize = 1048576;
+
     String TAG = "scan utility";
+    private static ScanUtils scanUtils;
+    private ScanUtils()
+    {
 
-    
+    }
 
-   HashMap<String,OccurenceTypeModel> occurenceTypeModelMap;
-    boolean keepScanning = true;
+    public static ScanUtils getInstance()
+    {
+        if(scanUtils == null)
+        {
+            scanUtils = new ScanUtils();
+        }
 
-    final double megaBytesSize = 1048576;
-    double average = 0;
+        return scanUtils;
+    }
+
+
+
 
     public void setKeepScanning(boolean keepScanning) {
         this.keepScanning = keepScanning;
@@ -38,8 +49,8 @@ public class ScanUtils {
     {
         keepScanning = true;
         occurenceTypeModelMap = new HashMap<String,OccurenceTypeModel>();
+
         ArrayList<FileModel> fileModelArrayList = new ArrayList<>();
-        // ContentResolver cr = context.getContentResolver();
         Uri uri = MediaStore.Files.getContentUri("external");
 
         // every column, although that is huge waste, you probably need
@@ -53,12 +64,13 @@ public class ScanUtils {
         String sortOrder = null; // unordered
         Cursor allFilesCursor = cr.query(uri, projection, selection, selectionArgs, sortOrder);
 
-        double cursorsize = allFilesCursor.getCount();
-        int previousPercent = -1;
 
-        Log.d(TAG,"count " + cursorsize);
-        double counter = 0;
         if (allFilesCursor != null) {
+
+            double cursorsize = allFilesCursor.getCount();
+            int previousPercent = -1;
+            double counter = 0;
+
             if (allFilesCursor.moveToFirst()) {
                 do {
                     int MediaType = allFilesCursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
@@ -93,20 +105,16 @@ public class ScanUtils {
                                 tempModel.incrementOccurence();
                                 occurenceTypeModelMap.put(extension,tempModel);
                             }
-
                         }
-
-
-
                     }
 
                     int percentage = (int)((counter / cursorsize)*100);
+                   // Log.d(TAG,"percentage " + percentage);
                     if(percentage > previousPercent)
                     {
                         previousPercent = percentage;
                         progressListener.onProgress(percentage);
                     }
-
                 } while (allFilesCursor.moveToNext() && keepScanning);
             }
         }
@@ -116,10 +124,7 @@ public class ScanUtils {
         if(keepScanning)
         {
             progressListener.onCompleted(fileModelArrayList,occurenceTypeModelMap);
-            Log.d(TAG,cursorsize+ "count " + counter);
-            Log.d(TAG,"list " + fileModelArrayList.size());
         }
-
         keepScanning = false;
 
     }
